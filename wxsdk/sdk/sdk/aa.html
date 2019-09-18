@@ -1,0 +1,1377 @@
+﻿<html>
+  <head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>用户中心JSSDK-开发者中心-用户云平台</title>
+		<link href="Css/github-bf51422f4bb36427d391e4b75a1daa083c2d840e.css" media="all" rel="stylesheet" type="text/css"/>
+		<link href="Css/github2-d731afd4f624c99a4b19ad69f3083cd6d02b81d5.css" media="all" rel="stylesheet" type="text/css"/>
+		<link href="Css/ztreestyle.css" media="all" rel="stylesheet" type="text/css"/>
+	  <style>
+		pre {
+		    counter-reset: line-numbering;
+		    border: solid 1px #d9d9d9;
+		    border-radius: 0;
+		    background: #fff;
+		    padding: 0;
+		    line-height: 23px;
+		    margin-bottom: 30px;
+		    white-space: pre;
+		    overflow-x: auto;
+		    word-break: inherit;
+		    word-wrap: inherit;
+		}
+
+		pre a::before {
+		  content: counter(line-numbering);
+		  counter-increment: line-numbering;
+		  padding-right: 1em; /* space after numbers */
+		  width: 25px;
+		  text-align: right;
+		  opacity: 0.7;
+		  display: inline-block;
+		  color: #aaa;
+		  background: #eee;
+		  margin-right: 16px;
+		  padding: 2px 10px;
+		  font-size: 13px;
+		  -webkit-touch-callout: none;
+		  -webkit-user-select: none;
+		  -khtml-user-select: none;
+		  -moz-user-select: none;
+		  -ms-user-select: none;
+		  user-select: none;
+		}
+
+		pre a:first-of-type::before {
+		  padding-top: 10px;
+		}
+
+		pre a:last-of-type::before {
+		  padding-bottom: 10px;
+		}
+
+		pre a:only-of-type::before {
+		  padding: 10px;
+		}
+
+		.highlight { background-color: #ffffcc } /* RIGHT */
+		</style>
+  </head>
+  <body>
+	  <div>
+				<div style='width:25%;'>
+						<ul id="tree" class="ztree" style='width:100%'>
+
+						</ul>
+				</div>
+        <div id='readme' style='width:70%;margin-left:20%;'>
+          	<article class='markdown-body'>
+            	<h1 id="1-jssdk-">1.jssdk文档说明</h1>
+<h2 id="-">阅读对象</h2>
+<p>本文阅读对象：使用jssdk构建自定义登录注册的前端用户。</p>
+<p><strong>jssdk例子访问地址</strong>：<a href="https://web.jiezhansifang.com/v2/public/index.html">https://web.jiezhansifang.com/v2/public/index.html</a></p>
+<h2 id="1-1-">1.1 术语</h2>
+<p>1.<strong>companyId</strong>
+公司id，公司负责人在注册公司时由系统生成的公司唯一标识。</p>
+<p>2.<strong>appType</strong>
+接入的应用类型（1：PC端应用；2：移动端应用；3：H5应用）</p>
+<p>3.<strong>appKey</strong>
+公司下业务线的唯一标识。</p>
+<p>4.<strong>appSecret</strong>
+公司下业务线的密钥。</p>
+<p>5.<strong>appChannel</strong>
+用于下发推广的渠道</p>
+<h2 id="1-2-">1.2 使用场景</h2>
+<p>1.希望自定义 登录、注册、绑定手机、找回密码、都三方登录 页面样式时。</p>
+<p>2.不希望开发以上功能逻辑时。</p>
+<p>jssdk封装了所有用户中心的逻辑实现比如（验证码功能、字段校验等等）。用户只需要按照例子将接口排列组合就可以得到想要的功能页面。</p>
+<h2 id="1-3-">1.3 代码示例</h2>
+<p>==（以下例子仅供参考，请不要使用例子中的appkey、appChannel等参数，以免出现无法使用的情况）==</p>
+<h3 id="1-">1.帐号登录</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;帐号登录&lt;/title&gt;
+        &lt;script src=&quot;https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+            .row {
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .frame {
+                border: solid;
+                padding: 10px 10px 10px 10px;
+                width: 300px;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div name=&quot;login&quot; class=&quot;frame&quot;&gt;
+            &lt;p&gt;login
+                &lt;div id=&quot;loginUser&quot;&gt;&lt;/div&gt;
+            &lt;/p&gt;
+            &lt;input id=&quot;username&quot; class=&quot;row&quot; placeholder=&quot;用户名&quot; /&gt;
+            &lt;input id=&quot;password&quot; class=&quot;row&quot; placeholder=&quot;密码&quot; /&gt;
+            &lt;div id=&quot;vcodeShell&quot; style=&quot;display: none&quot;&gt;&lt;input id=&quot;vcode&quot; style=&quot;height:30px;float: left;margin-right: 10px;&quot; placeholder=&quot;验证码&quot; /&gt; &lt;img id=&quot;loginVcode&quot; /&gt;&lt;/div&gt;
+            &lt;p&gt;&lt;button id=&quot;submit&quot;&gt;submit&lt;/button&gt;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+
+    &lt;script&gt;
+        function getUrlParamByName(name) {
+            var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+            return &quot;&quot;;
+        };
+
+        var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+        var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+        acrossSDK.config({
+            companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+            appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+            appSecret: &quot;&quot;,
+            appType: &quot;1&quot;,
+            appChannel: &quot;&quot;,
+            actionList: [
+                &quot;login&quot;
+            ]
+        });
+
+        acrossSDK.ready(function() {
+            //登录
+            document.getElementById(&quot;submit&quot;).onclick = function(event) {
+                var request = {
+                    passport: document.getElementById(&quot;username&quot;).value,
+                    password: document.getElementById(&quot;password&quot;).value,
+                    vcode: document.getElementById(&quot;vcode&quot;).value || &quot;&quot;
+                };
+
+                function callback(res) {
+                    if(res.status == &quot;error&quot; &amp;&amp; res.code &amp;&amp; res.code == 10405) {
+                        document.getElementById(&quot;vcodeShell&quot;).style.display = &quot;&quot;;
+                        document.getElementById(&quot;loginVcode&quot;).src = acrossSDK.getLoginVcode();
+                    }
+
+                    //验证码错误需要重新刷新
+                    if(res.status == &quot;error&quot; &amp;&amp; res.code &amp;&amp; res.code == 10406) {
+                        document.getElementById(&quot;loginVcode&quot;).src = acrossSDK.getLoginVcode();
+                    }
+
+                    if(res.status == &quot;success&quot;) {
+
+                        document.getElementById(&quot;loginUser&quot;).text = res.data.passport || &quot;&quot;
+                    }
+                    alert(res.status + &quot;：&quot; + res.info);
+                }
+                acrossSDK.loginSubmit(request, callback);
+            }
+
+            document.getElementById(&quot;loginVcode&quot;).onclick = function(event) {
+                document.getElementById(&quot;loginVcode&quot;).src = acrossSDK.getLoginVcode();
+            }
+        });
+    &lt;/script&gt;
+
+&lt;/html&gt;
+</code></pre><h3 id="2-">2.帐号注册</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;帐号注册&lt;/title&gt;
+        &lt;script src=&quot;https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+            .row {
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .frame {
+                border: solid;
+                padding: 10px 10px 10px 10px;
+                width: 300px;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div name=&quot;register&quot; class=&quot;frame&quot;&gt;
+            &lt;p&gt;register&lt;/p&gt;
+            &lt;input id=&quot;rusername&quot; class=&quot;row&quot; placeholder=&quot;用户名&quot; /&gt;
+            &lt;input id=&quot;rpassword&quot; class=&quot;row&quot; placeholder=&quot;密码&quot; /&gt;
+            &lt;div id=&quot;rvcodeShell&quot; style=&quot;padding-top: 4px;&quot;&gt;&lt;input id=&quot;rvcode&quot; style=&quot;height:30px;float: left;margin-right: 10px;&quot; placeholder=&quot;验证码&quot; /&gt; &lt;img id=&quot;registerVcode&quot; /&gt;&lt;/div&gt;
+            &lt;p&gt;&lt;button id=&quot;rsubmit&quot;&gt;submit&lt;/button&gt;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+    &lt;script&gt;
+        function getUrlParamByName(name) {
+            var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+            return &quot;&quot;;
+        };
+        var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+        var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+        acrossSDK.config({
+            companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+            appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+            appSecret: &quot;&quot;,
+            appType: &quot;1&quot;,
+            appChannel: &quot;&quot;,
+            actionList: [
+                &quot;login&quot;,
+                &quot;register&quot;,
+                &quot;phoneRegister&quot;
+            ]
+        });
+
+        acrossSDK.ready(function() {
+            //初始化register图片验证码
+            document.getElementById(&quot;registerVcode&quot;).src = acrossSDK.getRegisterVcode();
+
+            //注册
+            document.getElementById(&quot;rsubmit&quot;).onclick = function(event) {
+                var request = {
+                    passport: document.getElementById(&quot;rusername&quot;).value,
+                    password: document.getElementById(&quot;rpassword&quot;).value,
+                    vcode: document.getElementById(&quot;rvcode&quot;).value || &quot;&quot;
+                };
+
+                function callback(res) {
+                    alert(res.status + &quot;：&quot; + res.info);
+                    if(res.status == &quot;error&quot; &amp;&amp; res.code == 10406) {
+                        document.getElementById(&quot;registerVcode&quot;).src = acrossSDK.getRegisterVcode();
+                    }
+
+                }
+                acrossSDK.registerSubmit(request, callback);
+            }
+
+            document.getElementById(&quot;registerVcode&quot;).onclick = function(event) {
+                document.getElementById(&quot;registerVcode&quot;).src = acrossSDK.getRegisterVcode();
+            }
+        });
+    &lt;/script&gt;
+
+&lt;/html&gt;
+</code></pre><h3 id="3-">3.手机注册</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;&lt;/title&gt;
+        &lt;script src=&quot;https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+            .row {
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .frame {
+                border: solid;
+                padding: 10px 10px 10px 10px;
+                width: 300px;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div name=&quot;phoneregister&quot; class=&quot;frame&quot;&gt;
+            &lt;p&gt;phone register&lt;/p&gt;
+            &lt;input id=&quot;rphone&quot; class=&quot;row&quot; placeholder=&quot;手机号&quot; /&gt;
+            &lt;div&gt;&lt;input id=&quot;rphoneCode&quot; placeholder=&quot;短信验证码&quot; /&gt; &lt;button id=&quot;rgetPhoneCode&quot;&gt;获取短信验证码&lt;/button&gt;&lt;/div&gt;
+            &lt;input id=&quot;rphonePassword&quot; class=&quot;row&quot; placeholder=&quot;密码&quot; /&gt;
+            &lt;div id=&quot;rphoneVcodeShell&quot; style=&quot;padding-top: 4px;display: none&quot;&gt;&lt;input id=&quot;rphoneVcode&quot; style=&quot;height:30px;float: left;margin-right: 10px;&quot; placeholder=&quot;验证码&quot; /&gt; &lt;img id=&quot;phoneRegisterVcode&quot; /&gt;&lt;/div&gt;
+            &lt;p&gt;&lt;button id=&quot;rphoneSubmit&quot;&gt;submit&lt;/button&gt;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+    &lt;script&gt;
+        function getUrlParamByName(name) {
+            var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+            return &quot;&quot;;
+        };
+
+        var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+        var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+        acrossSDK.config({
+            companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+            appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+            appSecret: &quot;&quot;,
+            appType: &quot;1&quot;,
+            appChannel: &quot;&quot;,
+            actionList: [
+                &quot;phoneRegister&quot;
+            ]
+        });
+
+        acrossSDK.ready(function() {
+            $(&quot;#phoneRegisterVcode&quot;).click(function() {
+                document.getElementById(&quot;phoneRegisterVcode&quot;).src = acrossSDK.phoneRegister.getPhoneRegisterVcode();
+            });
+            //获取验证码
+            $(&quot;#rgetPhoneCode&quot;).click(function(event) {
+                var callback = function(res) {
+                    alert(res.status + &quot;：&quot; + res.info);
+
+                    if(res.status == &quot;error&quot; &amp;&amp; res.code &amp;&amp; res.code == 10405) {
+                        $(&quot;#rphoneVcodeShell&quot;).css(&quot;display&quot;, &quot;&quot;);
+                        $(&quot;#phoneRegisterVcode&quot;).click();
+                    }
+
+                    if(res.status == &quot;error&quot; &amp;&amp; res.code &amp;&amp; res.code == 10406){
+                        $(&quot;#phoneRegisterVcode&quot;).click();
+                    }
+                }
+
+                acrossSDK.phoneRegister.getPhoneRegisterPhoneCode({
+                    phone: $(&quot;#rphone&quot;).val(),
+                    vcode: $(&quot;#rphoneVcode&quot;).val()
+                }, callback);
+            });
+
+            $(&quot;#rphoneSubmit&quot;).click(function(event) {
+                var request = {
+                    phone: $(&quot;#rphone&quot;).val(),
+                    phoneCode: $(&quot;#rphoneCode&quot;).val(),
+                    password: $(&quot;#rphonePassword&quot;).val()
+                };
+
+                function callback(res) {
+                    alert(res.status + &quot;：&quot; + res.info);
+                }
+
+                acrossSDK.phoneRegister.phoneRegisterSubmit(request, callback);
+            });
+
+        });
+    &lt;/script&gt;
+
+&lt;/html&gt;
+</code></pre><h3 id="4-">4.短信登录</h3>
+<pre><code>
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;短信登录&lt;/title&gt;
+        &lt;script src=&quot;https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+            .row {
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .frame {
+                border: solid;
+                padding: 10px 10px 10px 10px;
+                width: 300px;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div name=&quot;login&quot; class=&quot;frame&quot;&gt;
+            &lt;p&gt;短信登录
+                &lt;div id=&quot;loginUser&quot;&gt;&lt;/div&gt;
+            &lt;/p&gt;
+            &lt;input id=&quot;phone&quot; class=&quot;row&quot; placeholder=&quot;手机号&quot; /&gt;
+            &lt;div&gt;&lt;input id=&quot;code&quot; placeholder=&quot;短信验证码&quot; /&gt; &lt;button id=&quot;codeBut&quot;&gt;获取短信验证码&lt;/button&gt;&lt;/div&gt;
+            &lt;div id=&quot;vcodeShell&quot; style=&quot;display: none&quot;&gt;&lt;input id=&quot;vcode&quot; style=&quot;height:30px;float: left;margin-right: 10px;&quot; placeholder=&quot;验证码&quot; /&gt; &lt;img id=&quot;loginVcode&quot; /&gt;&lt;/div&gt;
+            &lt;p&gt;&lt;button id=&quot;submit&quot;&gt;submit&lt;/button&gt;&lt;/p&gt;
+        &lt;/div&gt;
+
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+
+    &lt;script&gt;
+        function getUrlParamByName(name) {
+            var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+            return &quot;&quot;;
+        };
+        var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+        var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+        acrossSDK.config({
+            companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+            appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+            appSecret: &quot;&quot;,
+            appType: &quot;1&quot;,
+            appChannel: &quot;&quot;,
+            actionList: [
+                &quot;smsLogin&quot;
+            ]
+        });
+
+        acrossSDK.ready(function() {
+            var $loginVcode = $(&quot;#loginVcode&quot;);
+            $loginVcode.click(function() {
+                document.getElementById(&quot;loginVcode&quot;).src = acrossSDK.smsLogin.getVcode();
+            });
+
+            $(&quot;#codeBut&quot;).click(function() {
+                var callback = function(res) {
+                    alert(res.status + &quot;：&quot; + res.info);
+                    if(res.status == &quot;error&quot; &amp;&amp; res.code &amp;&amp; res.code == 10405) {
+                        $(&quot;#vcodeShell&quot;).css(&quot;display&quot;, &quot;&quot;);
+                        $loginVcode.click();
+                    }
+
+                    if(res.code == 10406) {
+                        $loginVcode.click();
+                    }
+                }
+                acrossSDK.smsLogin.getPhoneCode({
+                    phone: $(&quot;#phone&quot;).val(),
+                    vcode: $(&quot;#vcode&quot;).val()
+                }, callback);
+            });
+
+            //提交
+            $(&quot;#submit&quot;).click(function() {
+                var request = {
+                    phone: $(&quot;#phone&quot;).val(),
+                    phoneCode: $(&quot;#code&quot;).val()
+                };
+
+                var callback = function(res) {
+                    alert(res.status + &quot;：&quot; + res.info);
+                }
+                acrossSDK.smsLogin.submit(request, callback);
+            });
+        });
+    &lt;/script&gt;
+
+&lt;/html&gt;
+</code></pre><h3 id="5-">5.找回密码</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;&lt;/title&gt;
+        &lt;script src=&quot;https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+            .row {
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .frame {
+                padding: 10px 10px 10px 10px;
+                width: 300px;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div class=&quot;frame&quot;&gt;
+            &lt;div id=&quot;step1Frame&quot; name=&quot;step1Frame&quot; style=&quot;border: solid;padding: 10px 10px 10px 10px;width: 300px;margin-bottom: 10px;&quot;&gt;
+                &lt;p&gt;找回密码 1
+                    &lt;div id=&quot;loginUser&quot;&gt;&lt;/div&gt;
+                &lt;/p&gt;
+                &lt;input id=&quot;passport&quot; class=&quot;row&quot; placeholder=&quot;用户名/手机号&quot; /&gt;
+                &lt;div&gt;&lt;input id=&quot;vcode&quot; style=&quot;height:30px;float: left;margin-right: 10px;&quot; placeholder=&quot;验证码&quot; /&gt; &lt;img id=&quot;vcodeImg&quot; /&gt;&lt;/div&gt;
+                &lt;p&gt;&lt;button id=&quot;submit&quot;&gt;下一步&lt;/button&gt;&lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;div id=&quot;step2Frame&quot; name=&quot;step2Frame&quot; style=&quot;display:none;border: solid;padding: 10px 10px 10px 10px;width: 300px;margin-bottom: 10px;&quot;&gt;
+                &lt;p&gt;找回密码 2
+                    &lt;div id=&quot;loginUser&quot;&gt;&lt;/div&gt;
+                &lt;/p&gt;
+                &lt;div id=&quot;bindPhone&quot; style=&quot;display: none;&quot;&gt;
+                    &lt;div id=&quot;findPasswordNotice&quot;&gt;
+                        &lt;p&gt;您的帐号绑定手机:&lt;span class=&quot;js-shortPhone&quot;&gt;&lt;/span&gt;&lt;/span&gt;，请联系客服&lt;/p&gt;
+                        &lt;p&gt;请在工作日9:00—17:00拨打电话 027-9998-9090&lt;/p&gt;
+                        &lt;p&gt;&lt;button id=&quot;noticeSubmit&quot;&gt;下一步&lt;/button&gt;&lt;/p&gt;
+                    &lt;/div&gt;
+
+                    &lt;div id=&quot;fpByPhone&quot; style=&quot;display: none;&quot;&gt;
+                        手机号码：&lt;span class=&quot;js-shortPhone&quot;&gt;&lt;/span&gt;
+                        &lt;div id=&quot;step2VcodeFrame&quot; style=&quot;display: none;&quot;&gt;&lt;input id=&quot;step2Vcode&quot; style=&quot;height:30px;float: left;margin-right: 10px;&quot; placeholder=&quot;验证码&quot; /&gt; &lt;img id=&quot;step2VcodeImg&quot; /&gt;&lt;/div&gt;
+                        &lt;div&gt;&lt;input id=&quot;step2Code&quot; placeholder=&quot;短信验证码&quot; /&gt; &lt;button id=&quot;step2CodeBut&quot;&gt;获取短信验证码&lt;/button&gt;&lt;/div&gt;
+                        &lt;p&gt;&lt;button id=&quot;step2Submit&quot;&gt;下一步&lt;/button&gt;&lt;/p&gt;
+                    &lt;/div&gt;
+
+                &lt;/div&gt;
+                &lt;div id=&quot;notBindPhone&quot; style=&quot;display: none;&quot;&gt;
+                    &lt;button&gt;您的帐号未绑定手机，请联系客服&lt;/button&gt;
+                    &lt;button&gt;请在工作日9:00—17:00拨打电话 027-9998-9090&lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div id=&quot;step3Frame&quot; name=&quot;step3Frame&quot; style=&quot;display:none;border: solid;padding: 10px 10px 10px 10px;width: 300px;margin-bottom: 10px;&quot;&gt;
+                &lt;p&gt;找回密码 3
+                    &lt;div id=&quot;loginUser&quot;&gt;&lt;/div&gt;
+                &lt;/p&gt;
+                &lt;input id=&quot;step3password&quot; class=&quot;row&quot; placeholder=&quot;新密码&quot; /&gt;
+                &lt;input id=&quot;step3rpassword&quot; class=&quot;row&quot; placeholder=&quot;确认密码&quot; /&gt;
+                &lt;p&gt;&lt;button id=&quot;step3Submit&quot;&gt;下一步&lt;/button&gt;&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+    &lt;script&gt;
+        //根据名称获取url参数
+        function getUrlParamByName(name) {
+            var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+            return &quot;&quot;;
+        };
+
+        var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+        var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+        //由于switchPanel和下面的step2都会用到$step2VcodeImg对象，放在这里进行初始化
+        var $step2VcodeImg = $(&quot;#step2VcodeImg&quot;);
+        function switchPanel(num, response) {
+            response = response || {};
+            $(&quot;#step1Frame&quot;).css(&quot;display&quot;, num == 1 ? &quot;&quot; : &quot;none&quot;)
+            if(num == 2) {
+                //如果是第二步则判断是否绑定手机
+                if(response &amp;&amp; response.data &amp;&amp; response.data.displayPhone) {
+                    $(&quot;#bindPhone&quot;).css(&quot;display&quot;, &quot;&quot;);
+                    $(&quot;.js-shortPhone&quot;).text(response.data.displayPhone);
+                    $step2VcodeImg.click();
+                } else {
+                    $(&quot;#bindPhone&quot;).css({
+                        &quot;display&quot;: &quot;&quot;
+                    })
+                    $(&quot;.js-shortPhone&quot;).text(&quot;为空，您可能未绑定手机&quot;);
+                    $(&quot;#noticeSubmit&quot;).hide();
+                }
+            }
+            $(&quot;#step2Frame&quot;).css({
+                &quot;display&quot;: (num == 2 ? &quot;&quot; : &quot;none&quot;)
+            })
+            $(&quot;#step3Frame&quot;).css({
+                &quot;display&quot;: (num == 3 ? &quot;&quot; : &quot;none&quot;)
+            })
+        }
+
+        acrossSDK.config({
+            companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+            appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+            appSecret: &quot;&quot;,
+            appType: &quot;1&quot;,
+            appChannel: &quot;&quot;,
+            actionList: [
+                &quot;findPassword&quot;
+            ]
+        });
+
+        acrossSDK.ready(function() {
+            //第一步
+            //点击刷新图片验证码
+            var $vcodeImg = $(&quot;#vcodeImg&quot;);
+            $vcodeImg.click(function() {
+                $vcodeImg.attr(&quot;src&quot;, acrossSDK.findPassword.getStep1Vcode())
+            });
+            //初始化图片验证码
+            $vcodeImg.click();
+
+            $(&quot;#submit&quot;).click(function() {
+                var request = {
+                    passport: $(&quot;#passport&quot;).val(),
+                    vcode: $(&quot;#vcode&quot;).val()
+                };
+
+                var callback = function(res) {
+                    alert(res.status + &quot;：&quot; + res.info);
+                    //如果是验证码错误，则刷新
+                    if(res.code == 10406){
+                        $vcodeImg.click();
+                    }
+
+                    if(res.code == 10200) {
+                        switchPanel(2, res);
+                    }
+                }
+                acrossSDK.findPassword.step1Submit(request, callback);
+            });
+
+            //第二步
+            $step2VcodeImg.click(function() {
+                $step2VcodeImg.attr(&quot;src&quot;, acrossSDK.findPassword.getStep2Vcode())
+            });
+
+            $(&quot;#noticeSubmit&quot;).click(function() {
+                //进入手机找回密码界面
+                $(&quot;#findPasswordNotice&quot;).hide();
+                $(&quot;#fpByPhone&quot;).show();
+            });
+
+            $(&quot;#step2CodeBut&quot;).click(function() {
+                //发送短信验证码
+                var request = {
+                    vcode: $(&quot;#step2Vcode&quot;).val()
+                };
+
+                var callback = function(res) {
+                    alert(res.info);
+
+                    if(res.code == 10405){
+                        $(&quot;#step2VcodeFrame&quot;).show();
+                    }
+
+                    //如果是验证码错误，则刷新
+                    if(res.code == 10406){
+                        $step2VcodeImg.click();
+                    }
+
+                }
+                acrossSDK.findPassword.sendcode(request, callback);
+            });
+
+            $(&quot;#step2Submit&quot;).click(function() {
+                var request = {
+                    phoneCode: $(&quot;#step2Code&quot;).val()
+                };
+
+                var callback = function(res) {
+                    alert(res.info);
+                    if(res.code == 10200) {
+                        //跳转到第3步页面
+                        switchPanel(3, res);
+                    }
+                }
+
+                acrossSDK.findPassword.step2Submit(request, callback);
+            });
+
+            //第三步
+            $(&quot;#step3Submit&quot;).click(function() {
+                var request = {
+                    password: $(&quot;#step3password&quot;).val(),
+                    rpassword: $(&quot;#step3rpassword&quot;).val()
+                };
+
+                var callback = function(res) {
+                    alert(res.info);
+                }
+
+                acrossSDK.findPassword.step3Submit(request, callback);
+            });
+        });
+    &lt;/script&gt;
+
+&lt;/html&gt;
+
+</code></pre><h3 id="6-">6.第三方登录</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;短信登录&lt;/title&gt;
+        &lt;script src=&quot;https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+            .row {
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .frame {
+                border: solid;
+                padding: 10px 10px 10px 10px;
+                width: 300px;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div name=&quot;login&quot; class=&quot;frame&quot;&gt;
+            &lt;p&gt;第三方登录
+                &lt;div id=&quot;thirdLogin&quot;&gt;&lt;/div&gt;
+            &lt;/p&gt;
+
+            &lt;a id=&quot;wechat&quot;&gt;微信登录&lt;/a&gt;
+            &lt;a id=&quot;qq&quot;&gt;qq登录&lt;/a&gt;
+        &lt;/div&gt;
+
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+
+    &lt;script&gt;
+        function getUrlParamByName(name) {
+            var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+            return &quot;&quot;;
+        };
+        var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+        var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+
+        acrossSDK.config({
+            companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+            appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+            appSecret: &quot;&quot;,
+            appType: &quot;1&quot;,
+            appChannel: &quot;&quot;,
+            actionList: [
+                &quot;thirdLogin&quot;
+            ]
+        });
+
+        acrossSDK.ready(function() {
+                //获取微信登录地址
+                var wechatLoginUrl = acrossSDK.thirdLogin.getWeiChatUrl({
+                    callbackURI: window.location.protocol+&quot;//&quot;+window.location.host+ &quot;/public/callback.html&quot;,
+                    display: &quot;&quot;
+                });
+                $(&quot;#wechat&quot;).attr(&quot;href&quot;,wechatLoginUrl);
+
+                //获取qq登录地址
+                var qqLoginUrl = acrossSDK.thirdLogin.getQQUrl({
+                    callbackURI: window.location.protocol+&quot;//&quot;+window.location.host+ &quot;/public/callback.html&quot;,
+                    display: &quot;&quot;
+                });
+                $(&quot;#qq&quot;).attr(&quot;href&quot;,qqLoginUrl);
+        });
+    &lt;/script&gt;
+
+&lt;/html&gt;
+
+</code></pre><h3 id="7-">7.实名认证</h3>
+<pre><code>
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;实名认证&lt;/title&gt;
+        &lt;script src=&quot;https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+            .row {
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .frame {
+                padding: 10px 10px 10px 10px;
+                width: 300px;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div name=&quot;register&quot; class=&quot;frame&quot;&gt;
+            &lt;p&gt;实名认证&lt;/p&gt;
+            &lt;input class=&quot;js-passport row&quot; placeholder=&quot;账号&quot; /&gt;
+            &lt;input class=&quot;js-realName row&quot; placeholder=&quot;姓名&quot; /&gt;
+            &lt;input class=&quot;js-idCard row&quot; placeholder=&quot;身份证号&quot; /&gt;
+            &lt;input class=&quot;js-sevenDayLogin&quot; type=&quot;checkbox&quot; /&gt;七天不再显示
+            &lt;p&gt;&lt;button style=&quot;display: none;&quot; class=&quot;js-pass&quot;&gt;pass&lt;/button&gt; &lt;button class=&quot;js-submit&quot;&gt;submit&lt;/button&gt;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+    &lt;script&gt;
+        function getUrlParamByName(name) {
+            var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+            return &quot;&quot;;
+        };
+        var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+        var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+        acrossSDK.config({
+            companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+            appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+            appSecret: &quot;&quot;,
+            appType: &quot;1&quot;,
+            appChannel: &quot;&quot;,
+            actionList: [
+                &quot;realName&quot;
+            ]
+        });
+
+        acrossSDK.ready(function() {
+            acrossSDK.realName.isPassVisible({}, function(res) {
+                if(res &amp;&amp; res.data &amp;&amp; res.data.flag == 0) {
+                    //没有跳过功能
+                    $(&quot;.js-pass&quot;).hide();
+                } else {
+                    $(&quot;.js-pass&quot;).show();
+                }
+            });
+
+            $(&quot;.js-submit&quot;).click(function(event) {
+                var request = {
+                    passport: $(&quot;.js-passport&quot;).val(),
+                    realName: $(&quot;.js-realName&quot;).val(),
+                    idCard: $(&quot;.js-idCard&quot;).val()
+                };
+
+                function callback(res) {
+                    alert(res.status + &quot;：&quot; + res.info);
+                }
+
+                acrossSDK.realName.submit(request, callback);
+            });
+
+            $(&quot;.js-pass&quot;).click(function() {
+                var request = {
+                    passport: $(&quot;.js-passport&quot;).val()
+                };
+
+                function callback(res) {
+                    alert(res.status + &quot;：&quot; + res.info);
+                }
+
+                //当跳过验证时触发
+                if($(&quot;.js-sevenDayLogin&quot;).prop(&quot;checked&quot;)) {
+                    acrossSDK.realName.skip(request, callback);
+                }
+            });
+        });
+    &lt;/script&gt;
+
+&lt;/html&gt;
+
+</code></pre><h3 id="8-">8.判断账号是否完成实名认证</h3>
+<pre><code>
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;判断账号是否完成实名认证&lt;/title&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+    &lt;script&gt;
+        function getUrlParamByName(name) {
+            var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+            return &quot;&quot;;
+        };
+        var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+        var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+        acrossSDK.config({
+            companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+            appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+            appSecret: &quot;&quot;,
+            appType: &quot;1&quot;,
+            appChannel: &quot;&quot;,
+            actionList: [
+                &quot;realName&quot;
+            ]
+        });
+
+        acrossSDK.ready(function() {
+            var request = {
+                passport:getUrlParamByName(&quot;passport&quot;)
+            };
+
+            function callback(response){
+                alert(response.info);
+            }
+
+            acrossSDK.realName.checkNeedRealName(request,callback);
+        });
+    &lt;/script&gt;
+
+&lt;/html&gt;
+
+</code></pre><h2 id="1-4-1-">1.4 附录1 状态码 ：</h2>
+<p>当发出请求后，callback函数的返回值结构一般是这样</p>
+<pre><code>{&quot;code&quot;:10420,&quot;status&quot;:&quot;error&quot;,&quot;info&quot;:&quot;帐号或密码错误&quot;,&quot;data&quot;:null}
+</code></pre><p>用户可以自行根据状态码‘code’来进行后续操作，状态码如下：</p>
+<h3 id="-code-">接口返回code码说明</h3>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10200</td>
+<td>成功</td>
+</tr>
+<tr>
+<td>10400</td>
+<td>失败</td>
+</tr>
+<tr>
+<td>10000</td>
+<td>公司ID不合法</td>
+</tr>
+<tr>
+<td>10300</td>
+<td>callback不能为空</td>
+</tr>
+<tr>
+<td>10401</td>
+<td>参数不合法</td>
+</tr>
+<tr>
+<td>10402</td>
+<td>用户名不合法</td>
+</tr>
+<tr>
+<td>10403</td>
+<td>手机号不合法</td>
+</tr>
+<tr>
+<td>10404</td>
+<td>密码不合法</td>
+</tr>
+<tr>
+<td>10405</td>
+<td>请输入图片验证码</td>
+</tr>
+<tr>
+<td>10406</td>
+<td>图片验证码错误</td>
+</tr>
+<tr>
+<td>10407</td>
+<td>请求链接已失效</td>
+</tr>
+<tr>
+<td>10408</td>
+<td>签名错误</td>
+</tr>
+<tr>
+<td>10409</td>
+<td>请求超时，请重新验证</td>
+</tr>
+<tr>
+<td>10410</td>
+<td>该帐号已存在</td>
+</tr>
+<tr>
+<td>10411</td>
+<td>该手机号已存在</td>
+</tr>
+<tr>
+<td>10412</td>
+<td>短信验证码错误</td>
+</tr>
+<tr>
+<td>10413</td>
+<td>短信验证码类型错误</td>
+</tr>
+<tr>
+<td>10414</td>
+<td>短信验证码失效</td>
+</tr>
+<tr>
+<td>10415</td>
+<td>短信验证码过期</td>
+</tr>
+<tr>
+<td>10416</td>
+<td>操作过于频繁，请*秒后再试</td>
+</tr>
+<tr>
+<td>10417</td>
+<td>帐号已绑定手机</td>
+</tr>
+<tr>
+<td>10420</td>
+<td>帐号或密码错误</td>
+</tr>
+<tr>
+<td>10421</td>
+<td>登录密码错误次数过多，请稍后再试</td>
+</tr>
+<tr>
+<td>10422</td>
+<td>帐号不存在</td>
+</tr>
+<tr>
+<td>10423</td>
+<td>帐号被禁用</td>
+</tr>
+<tr>
+<td>10424</td>
+<td>登录密码未设置</td>
+</tr>
+<tr>
+<td>10425</td>
+<td>登录密码已设置</td>
+</tr>
+<tr>
+<td>10426</td>
+<td>密码对称解密出错</td>
+</tr>
+<tr>
+<td>10427</td>
+<td>原密码错误</td>
+</tr>
+<tr>
+<td>10430</td>
+<td>真实姓名不合法</td>
+</tr>
+<tr>
+<td>10431</td>
+<td>身份证号不合法</td>
+</tr>
+<tr>
+<td>10432</td>
+<td>帐号已实名认证</td>
+</tr>
+<tr>
+<td>10500</td>
+<td>内部服务器异常</td>
+</tr>
+<tr>
+<td>10501</td>
+<td>请求非法，请按正常流程操作</td>
+</tr>
+<tr>
+<td>10510</td>
+<td>应用注册参数缺失</td>
+</tr>
+<tr>
+<td>10511</td>
+<td>appType参数值错误</td>
+</tr>
+<tr>
+<td>10520</td>
+<td>应用未注册授权</td>
+</tr>
+<tr>
+<td>10521</td>
+<td>应用授权密钥错误</td>
+</tr>
+<tr>
+<td>10522</td>
+<td>应用授权失效</td>
+</tr>
+<tr>
+<td>10601</td>
+<td>callbackURI参数缺失</td>
+</tr>
+<tr>
+<td>10602</td>
+<td>第三方授权回调超时，请重新授权</td>
+</tr>
+<tr>
+<td>10603</td>
+<td>第三方授权回调CSRF攻击状态值验证失败</td>
+</tr>
+<tr>
+<td>10604</td>
+<td>第三方接口请求失败</td>
+</tr>
+<tr>
+<td>10605</td>
+<td>第三方账号openId参数缺失</td>
+</tr>
+<tr>
+<td>10606</td>
+<td>第三方账号openType参数非法</td>
+</tr>
+<tr>
+<td>10607</td>
+<td>第三方登录应用未授权</td>
+</tr>
+</tbody>
+</table>
+<h1 id="2-">2.用户中心通用页面</h1>
+<h2 id="2-1-">2.1 阅读对象</h2>
+<p>本文阅读对象：使用预定好的样式的登录注册页面的前端。</p>
+<p>例子访问地址：<a href="https://web.jiezhansifang.com/v2/public/common/index.html">https://web.jiezhansifang.com/v2/public/common/index.html</a></p>
+<h2 id="2-2-">2.2 术语</h2>
+<p>1.<strong>closable</strong>:true|false,表示是否需要显示关闭按钮。</p>
+<p>2.<strong>type</strong>:表示引入什么页面，比如：type:&quot;smsLogin&quot;就表示引入的是短信登录页面。</p>
+<p>3.<strong>companyId</strong> 公司id，公司负责人在注册公司时由系统生成的公司唯一标识。</p>
+<p>4.<strong>appType</strong> 接入的应用类型（1：PC端应用；2：移动端应用；3：H5应用）。</p>
+<p>5.<strong>appKey</strong> 公司下业务线的唯一标识。</p>
+<p>6.<strong>appChannel</strong> 用于下发推广的渠道。</p>
+<h2 id="2-3-">2.3 使用场景</h2>
+<p>1.希望尽快投入使用，不需要自定义样式的页面的情况。</p>
+<p>2.通用页面封装了所有用户中心的逻辑实现比如（验证码功能、字段校验等等）甚至一套通用皮肤。用户只需要按照例子使用即可得到即刻可以使用的登录、注册、找回密码、实名认证等等页面。</p>
+<h2 id="2-4-">2.4 代码示例</h2>
+<h3 id="1-">1.帐号注册</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;帐号注册&lt;/title&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/app.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/common.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+
+&lt;/html&gt;
+
+&lt;script&gt;
+    function getUrlParamByName(name) {
+        var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+        if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+        return &quot;&quot;;
+    };
+    var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+    var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+    var _instance = window[&quot;OEM_WEBSIT&quot;];
+    _instance.config({
+        loginPageUrl:&quot;login.html&quot;,
+        type:&quot;register&quot;,
+        companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+        appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+        appType: &quot;1&quot;,
+        appChannel: &quot;&quot;
+    },function(viwer){
+        viwer.bind(&quot;event:passport_registered&quot;,function(response){
+            alert(response.info||&quot;&quot;);
+        });
+
+        viwer.bind(&quot;event:PhoneRegister_Registered&quot;,function(response){
+            alert(response.info||&quot;&quot;);
+        });
+
+        viwer.bind(&quot;event:close_click&quot;, function(response) {
+            alert(&quot;关闭按钮被点击&quot;);
+        });
+    });
+&lt;/script&gt;
+</code></pre><h3 id="2-">2.帐号登录</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;帐号登录&lt;/title&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/app.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/common.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+
+&lt;/html&gt;
+
+&lt;script&gt;
+    function getUrlParamByName(name) {
+        var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+        if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+        return &quot;&quot;;
+    };
+    var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+    var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+    var _instance = window[&quot;OEM_WEBSIT&quot;];
+    _instance.config({
+        callbackURI:&quot;/public/common/middle.html&quot;,
+        closeable:false,
+        registerPageUrl:&quot;register.html&quot;,
+        type:&quot;login&quot;,
+        companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+        appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+        appType: &quot;1&quot;,
+        appChannel: &quot;&quot;
+    },function(viwer){
+        viwer.bind(&quot;event:submited&quot;,function(response){
+            alert(response.info||&quot;&quot;);
+        });
+
+        viwer.bind(&quot;event:close_click&quot;, function(response) {
+            alert(&quot;关闭按钮被点击&quot;);
+        });
+    });
+&lt;/script&gt;
+
+
+</code></pre><h3 id="3-">3.短信登录</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;短信登录&lt;/title&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/app.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/common.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+
+&lt;/html&gt;
+
+&lt;script&gt;
+    function getUrlParamByName(name) {
+        var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+        if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+        return &quot;&quot;;
+    };
+    var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+    var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+    var _instance = window[&quot;OEM_WEBSIT&quot;];
+    _instance.config({
+        closable:true,
+        registerPageUrl:&quot;register.html&quot;,
+        type:&quot;smsLogin&quot;,
+        companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+        appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+        appType: &quot;1&quot;,
+        appChannel: &quot;&quot;
+    },function(viwer){
+        viwer.bind(&quot;event:submited&quot;,function(response){
+            alert(response.info||&quot;&quot;);
+        });
+
+        viwer.bind(&quot;event:close_click&quot;, function(response) {
+            alert(&quot;关闭按钮被点击&quot;);
+        });
+    });
+&lt;/script&gt;
+
+</code></pre><h3 id="4-">4.找回密码</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;找回密码&lt;/title&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/app.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/common.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+
+&lt;/html&gt;
+
+&lt;script&gt;
+    function getUrlParamByName(name) {
+        var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+        if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+        return &quot;&quot;;
+    };
+    var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+    var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+    var _instance = window[&quot;OEM_WEBSIT&quot;];
+    _instance.config({
+        closeable:false,
+        type: &quot;findPassword&quot;,
+        companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+        appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+        appType: &quot;1&quot;,
+        appChannel: &quot;&quot;
+    }, function(viwer) {
+        viwer.bind(&quot;event:step3Submited&quot;, function(response) {
+            alert(response.info||&quot;&quot;);
+        });
+
+        viwer.bind(&quot;event:close_click&quot;, function(response) {
+            alert(&quot;关闭按钮被点击&quot;);
+        });
+    });
+&lt;/script&gt;
+
+</code></pre><h3 id="5-">5.实名认证</h3>
+<pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot;&gt;
+        &lt;title&gt;实名认证&lt;/title&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/app.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;https://web.jiezhansifang.com/v2/public/common/common.js?7e8c6d797c6e5a11a14f&quot;&gt;&lt;/script&gt;&lt;/body&gt;
+
+&lt;/html&gt;
+
+&lt;script&gt;
+    function getUrlParamByName(name) {
+        var reg = new RegExp(&quot;(^|\\?|&amp;)&quot;+ name +&quot;=([^&amp;]*)(\\s|&amp;|$)&quot;, &quot;i&quot;);
+        if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, &quot; &quot;));
+        return &quot;&quot;;
+    };
+    var customAppKey = getUrlParamByName(&quot;appKey&quot;);
+    var customCompanyId = getUrlParamByName(&quot;companyId&quot;);
+
+    var _instance = window[&quot;OEM_WEBSIT&quot;];
+    _instance.config({
+        type: &quot;realName&quot;,
+        companyId:customCompanyId||&quot;6b310eb79c5b4bf5bafed4632a493fb6&quot;,
+        appKey: customAppKey?customAppKey:&quot;b1deb7cadff646e0915d69bb1d886254&quot;,
+        appType: &quot;1&quot;,
+        appChannel: &quot;&quot;
+    }, function(viwer) {
+        viwer.bind(&quot;event:submited&quot;, function(response) {
+            alert(response.info||&quot;&quot;);
+        });
+
+        viwer.bind(&quot;event:passed&quot;, function(response) {
+            alert(&quot;已跳过&quot;);
+        });
+
+        viwer.bind(&quot;event:close_click&quot;, function(response) {
+            alert(&quot;关闭按钮被点击&quot;);
+        });
+    });
+&lt;/script&gt;
+
+</code></pre>
+          	</article>
+        </div>
+		</div>
+  </body>
+</html>
+<script type="text/javascript" src="Scripts/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="Scripts/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="Scripts/ztree_toc.js"></script>
+<script type="text/javascript" src="Scripts/toc_conf.js"></script>
+
+<SCRIPT type="text/javascript" >
+<!--
+$(document).ready(function(){
+    var css_conf = eval(markdown_panel_style);
+    $('#readme').css(css_conf)
+    
+    var conf = eval(jquery_ztree_toc_opts);
+		$('#tree').ztree_toc(conf);
+});
+//-->
+</SCRIPT>

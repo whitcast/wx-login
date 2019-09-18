@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>短信登录</title>
+        <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+        <style>
+            .row {
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .frame {
+                border: solid;
+                padding: 10px 10px 10px 10px;
+                width: 300px;
+                margin-bottom: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div name="login" class="frame">
+            <p>第三方登录
+                <div id="thirdLogin"></div>
+            </p>
+
+            <a id="wechat">微信登录</a>
+            <a id="qq">qq登录</a>
+        </div>
+
+    <script type="text/javascript" src="https://web.jiezhansifang.com/v2/public/app.js?db1d0bbeab7ed9531764"></script></body>
+
+    <script>
+        function getUrlParamByName(name) {
+            var reg = new RegExp("(^|\\?|&)"+ name +"=([^&]*)(\\s|&|$)", "i");
+            if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, " "));
+            return "";
+        };
+        var customAppKey = getUrlParamByName("appKey");
+        var customCompanyId = getUrlParamByName("companyId");
+
+
+        acrossSDK.config({
+            companyId:customCompanyId||"6b310eb79c5b4bf5bafed4632a493fb6",
+            appKey: customAppKey?customAppKey:"b1deb7cadff646e0915d69bb1d886254",
+            appSecret: "",
+            appType: "1",
+            appChannel: "",
+            actionList: [
+                "thirdLogin"
+            ]
+        });
+
+        acrossSDK.ready(function() {
+                //获取微信登录地址
+                var wechatLoginUrl = acrossSDK.thirdLogin.getWeiChatUrl({
+                    callbackURI: window.location.protocol+"//"+window.location.host+ "/public/callback.html",
+                    display: ""
+                });
+                $("#wechat").attr("href",wechatLoginUrl);
+
+                //获取qq登录地址
+                var qqLoginUrl = acrossSDK.thirdLogin.getQQUrl({
+                    callbackURI: window.location.protocol+"//"+window.location.host+ "/public/callback.html",
+                    display: ""
+                });
+                $("#qq").attr("href",qqLoginUrl);
+        });
+    </script>
+
+</html>

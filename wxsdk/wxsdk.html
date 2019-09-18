@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+  <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+  <script src="./sha1.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=0">
+</head>
+
+<body>
+
+
+  <input type="button" value="录音" id="start">
+  <input type="button" value="暂停后播放" id="stop_play">
+  <a class="weui-btn weui-btn_primary submit-btn" id="scanQRCode" type="button">扫一扫</a>
+  <script>
+    /*     1、首先获取Access_token
+                https请求方式: GET
+        https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxd2668df77c63743c&secret=63733c1ce8c10526536423e9b6b72bf0
+
+        appID      wxd2668df77c63743c
+        appsecret  63733c1ce8c10526536423e9b6b72bf0
+     */
+    var access_token ="20_EzGRHDT9ETSQEynbAcAhCxdUB3ELF6K77WmCqMivKh6GsjtOYixaf2uVYrYZL-u45eJFJv9nvTOMxhlPQZjOZ-HqClbtO1iwIhRZ6xuwBd5kDw5cAbQydoL88E99aoG73a-7aS2eKbKaDSFZBOTdAAAFSX";
+    /* 2、jsapi_ticket
+     2、获取 jsapi_ticket
+        http://127.0.0.1:5500/%E7%AC%94%E8%AE%B0/index.html#/appendix  中查看接口地址
+        用第一步拿到的access_token 采用http GET方式请求获得jsapi_ticket（有效期7200秒，开发者必须在自己的服务全局缓存jsapi_ticket）：
+        https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=13_7lKTXyOoubkJ5snv4JuKM-5lRUreqMFOCvdmUVzvp8JtHmxNsS-0KuaQcc7RBaSCZT9tYZKiwigJnEsDNSgKcdKdZNLxXRt7peDxZnKDdi9Zw9a74wimOjdaAMriQNRnX4K6oe7tKSIpLtb_OIEaACAZTP&type=jsapi
+                
+        返回值：
+            {
+            "errcode": 0,
+            "errmsg": "ok",
+            "ticket": "HoagFKDcsGMVCIY2vOjf9nzIuZUD33R0EjPuworI99EYBe8-iyBH6bMZ1mRqn43jfU7cN8sH-fQgDsqsSY9YRA",
+            "expires_in": 7200
+        }
+    
+    
+     */
+    
+    var ticket ="HoagFKDcsGMVCIY2vOjf9nzIuZUD33R0EjPuworI99HjTGXkAU8iWfHXAraYBStThj6zAxvspLeMLRHt09cY0g";
+    /* 3、ascii排序 */
+    var option = {
+      noncestr: "helloworld",
+      //
+      /* jsapi_ticket: "HoagFKDcsGMVCIY2vOjf9nzIuZUD33R0EjPuworI99HvSB_qu0M6c0-86qD61IENjP2U8u7PbKXz6hAsffv6Qg", */
+      jsapi_ticket: "HoagFKDcsGMVCIY2vOjf9nzIuZUD33R0EjPuworI99HjTGXkAU8iWfHXAraYBStThj6zAxvspLeMLRHt09cY0g",
+      timestamp: +new Date(),
+      url: location.href
+    };
+
+    var sign = [];
+    for (var k in option) {
+      console.log(k, 66);
+      console.log(option[k], 77);
+      //  aa=k.trim()+"="+option[k]      //noncestr="helloworld"
+      sign.push(k.trim() + "=" + option[k]) //['noncestr="helloworld"',url='ocation.href',timestamp=1554709758583]
+    };
+
+    sign.sort()
+    /* 4、sha1加密 */
+    var signStr = sign.join("&") //'noncestr="helloworld"'&url='ocation.href'&timestamp=1554709758583
+
+    /* 5、将值传入wx.config中 */
+    var signature = sha1(signStr)
+
+    wx.config({
+      debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+      appId: "wxd2668df77c63743c", // 必填，公众号的唯一标识
+      timestamp: option.timestamp, // 必填，生成签名的时间戳
+      nonceStr: option.noncestr, // 必填，生成签名的随机串
+      signature: signature, // 必填，签名，签名生成算法见附录1
+      jsApiList: [
+        'checkJsApi',
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage',
+        'onMenuShareQQ',
+        'onMenuShareWeibo',
+        'onMenuShareQZone',
+        'hideMenuItems',
+        'showMenuItems',
+        'hideAllNonBaseMenuItem',
+        'showAllNonBaseMenuItem',
+        'translateVoice',
+        'startRecord',
+        'stopRecord',
+        'onVoiceRecordEnd',
+        'playVoice',
+        'onVoicePlayEnd',
+        'pauseVoice',
+        'stopVoice',
+        'uploadVoice',
+        'downloadVoice',
+        'chooseImage',
+        'previewImage',
+        'uploadImage',
+        'downloadImage',
+        'getNetworkType',
+        'openLocation',
+        'getLocation',
+        'hideOptionMenu',
+        'showOptionMenu',
+        'closeWindow',
+        'scanQRCode',
+        'chooseWXPay',
+        'openProductSpecificView',
+        'addCard',
+        'chooseCard',
+        'openCard'
+      ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+    });
+
+    wx.ready(function () {
+      // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+
+
+      /* 1、绑定点击事件录音 */
+      document.querySelector("#start").onclick = function () {
+        wx.startRecord();
+      };
+
+      /* 2、绑定点击事件让录音暂停并且播放 */
+      document.querySelector("#stop_play").onclick = function () {
+        wx.stopRecord({
+          success: function (res) {
+            var localId = res.localId;
+
+            wx.playVoice({
+              localId: localId // 需要播放的音频的本地ID，由stopRecord接口获得
+            });
+          }
+        });
+      };
+
+      wx.checkJsApi({
+             jsApiList : ['scanQRCode'],
+             success : function(res) {
+             }
+        });
+
+        //点击按钮扫描二维码
+        document.querySelector('#scanQRCode').onclick = function() {
+            wx.scanQRCode({
+                needResult : 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                scanType : [ "qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                success : function(res) {
+                var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+                 window.location.href = result;//因为我这边是扫描后有个链接，然后跳转到该页面
+                }
+            });
+        };
+    });
+  </script>
+</body>
+
+</html>

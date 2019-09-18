@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户云平台管理系统</title>	
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<link rel="icon" href="data:;base64,=">
+    <link href="/Public/resource/css/index_ff2cd106.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/Public/resource/fonts/iconfont.css">
+</head>
+
+<body>
+<div id="root" style="height: 100%"></div>
+<script>
+    var CONSTANT = {
+        userName: "",
+		companyName: "",
+		contact: "",
+		contactPhone: "",
+		companyCode: ""
+    }
+</script>
+<script type="text/javascript" src="/Public/resource/js/vendor_f36f9959.js"></script>
+<script src="/Public/resource/js/index_1950388f.js"></script>
+</body>
+</html>
